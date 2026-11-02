@@ -17,5 +17,19 @@
       "Read(./.env.production)",
       "Edit(./.env.production)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/verify-changes.mjs\"",
+            "timeout": 300,
+            "statusMessage": "Code changed: running format check, lint and tests..."
+          }
+        ]
+      }
+    ]
   }
 }
