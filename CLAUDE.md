@@ -252,6 +252,25 @@ index.js             export { default as itemRoutes } from './item.routes.js';
 - Accounting changes must end with "the trial balance / balance sheet still balance";
   stock changes with "book stock = stock ledger".
 
+### Mandatory checks after every code change
+
+- Any change to `src/`, `tests/`, `scripts/` or the package/lint/format config must pass,
+  before the work is called done:
+  1. `npm run format:check` 2. `npm run lint` 3. `npm test` (needs the local MongoDB `rs0`).
+- This is **enforced automatically** by the Claude Code Stop hook
+  `.claude/hooks/verify-changes.mjs` (registered in `.claude/settings.json`). When Claude
+  finishes a turn and the code differs from the last passing run, it runs all three checks.
+  If one fails, Claude is blocked and must fix it. After 3 failed attempts in a row it stops
+  blocking and warns. If MongoDB is down it only warns.
+- A bug fix comes with a test that fails without the fix. A behaviour change updates the
+  tests that cover it. Never weaken or delete a test just to make it pass. If a test looks
+  wrong, explain why to the user first.
+- Big changes (money, stock, vouchers, approvals, permissions, branch scope) also need a test
+  for the main rule they touch, e.g. books still balance, stock not below zero, wrong branch
+  gets 403.
+- Report the real result (pass/fail counts) to the user. Never say "tests pass" without
+  running them.
+
 ## 13. Code style
 
 - Prettier decides formatting (single quotes, semicolons, 100 chars). Don't fight it.
@@ -270,5 +289,6 @@ index.js             export { default as itemRoutes } from './item.routes.js';
   and wait for approval.
 - When adding a module, check the matching frontend page in `../KBiz360-Quin-Aliza-ERP/src`
   so field names and flows match what the screens expect.
-- After a change: run `npm test` and `npm run lint`, and report the real results.
+- After a change: run `npm run format:check`, `npm run lint` and `npm test`, and report the
+  real results (see §12 "Mandatory checks"; the Stop hook enforces it).
 - Update §3 "Current status" when a module is added.
