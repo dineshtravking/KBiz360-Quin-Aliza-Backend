@@ -1,0 +1,19 @@
+node_modules/
+coverage/
+logs/
+*.log
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Claude Code: keep shared settings, ignore personal ones
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
